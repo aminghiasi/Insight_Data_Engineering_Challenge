@@ -17,10 +17,10 @@ One thing I wanted in my code was to be able to have top-k for any custom number
 
 After deciding on the format, the next step would be to read the input file(s). In the explanation of the challenge, it is mentioned only to use basic data structures. Therefore, I did not use Panda or even CSV reader and instead used a simple Open() command. My code reads the file line by line and creates a list of the values in every line using the command split(';'). Every line has the data for an application, and if the application is not certified, the code will ignore the line and continue to the next line. As the code is reading the file line by line, it creates instances of the class FeatureInstances. For example, if the first four lines of a file are:
 
-1 CASE_STATUS; SOC_NAME; WORKSITE_STATE
-2 CERTIFIED; SOFTWARE DEVELOPERS; FL
-3 CERTIFIED; DATABASE ADMINISTRATORS; CA
-4 CERTIFIED; SOFTWARE DEVELOPERS; CA
+1- CASE_STATUS; SOC_NAME; WORKSITE_STATE
+2- CERTIFIED; SOFTWARE DEVELOPERS; FL
+3- CERTIFIED; DATABASE ADMINISTRATORS; CA
+4- CERTIFIED; SOFTWARE DEVELOPERS; CA
 
 After reading line 2, it creates an instance of the class FeatureInstance for SOFTWARE DEVELOPERS in the OCCUPATIONS Feature class and also another instance of the class FeatureInstance, FL in the STATES Feature class. Then it increments the number_of_certified_application in 'SOFTWARE DEVELOPERS' and 'FL' inner classes. Reading the third line, it creates two new instances of FeatureInstance for DATABASE ADMINISTRATORS (in OCCUPATIONS Feature class) and CA (in STATES Feature class) and does the incrementation. However, in the fourth line, no new instance of FeatureInstance is created as both SOFTWARE DEVELOPERS and CA FeatureInstances exist, and the code only increments the number_of_certified_application variable inside the class. 
 
