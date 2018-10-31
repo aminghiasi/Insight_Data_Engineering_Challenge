@@ -18,19 +18,18 @@ class Feature:
     def __init__(self, feature_type):
         self.feature_type = feature_type
         self.feature_instances = {}
-        self.total_num_of_certified_applicants = 0
+        self.total_num_of_certified_applications = 0
 
     def manage_feature_instance(self, featureinstance_name):
         """This method checks if the current FeatureInstance.name exists, and if not creates it before
-         calling 'add_applicant' method"""
+         calling 'add_application' method"""
         if not featureinstance_name:
             return
+        self.total_num_of_certified_applications += 1
         try:
-            self.feature_instances[featureinstance_name].add_applicant()
+            self.feature_instances[featureinstance_name].add_application()
         except Exception:
             self.feature_instances[featureinstance_name] = Feature.FeatureInstance(featureinstance_name)
-
-        self.total_num_of_certified_applicants += 1
 
     def write_output(self, number_of_top_instances_to_print):
         file_path = os.path.join(os.path.dirname(__file__), '../output/top_10_{}.txt'.format(self.feature_type.lower()))
@@ -42,13 +41,13 @@ class Feature:
                     if line_number > number_of_top_instances_to_print:
                         break
                     ratio = -1
-                    if self.total_num_of_certified_applicants:
-                        ratio = round(100 * float(value.num_of_certified_applicants) /\
-                                      float(self.total_num_of_certified_applicants), 1)
-                    output_file.write('{};{};{}%\n'.format(value.name, value.num_of_certified_applicants, ratio))
+                    if self.total_num_of_certified_applications:
+                        ratio = round(100 * float(value.num_of_certified_applications) /\
+                                      float(self.total_num_of_certified_applications), 1)
+                    output_file.write('{};{};{}%\n'.format(value.name, value.num_of_certified_applications, ratio))
                     line_number += 1
         except FileNotFoundError:
-            print('Cannot open file {} for writing! Stopping ...'.format(file_path))
+            sys.exit('Cannot open file {} for writing the output! Running the code is terminated.'.format(file_path))
 
     class FeatureInstance:
         """The inner class of the class 'Feature'. If Feature.type = 'STATES', FeatureInstance.name can be 'CA', 'FL',
@@ -56,18 +55,18 @@ class Feature:
           'accountant', 'doctor' and so on"""
 
         def __init__(self, name):
-            self.num_of_certified_applicants = 1
+            self.num_of_certified_applications = 1
             self.name = name
 
-        def add_applicant(self):
-            self.num_of_certified_applicants += 1
+        def add_application(self):
+            self.num_of_certified_applications += 1
 
         def __gt__(self, other):
-            """This method defines greater-operator (>) to be used in sorting according to
-            'num_of_certified_applicants' and then 'name' respectively"""
-            if other.num_of_certified_applicants > self.num_of_certified_applicants:
+            """This method defines greater operator (>) to be used in sorting. Sorting is done according to
+            'num_of_certified_applications' and 'name' respectively"""
+            if other.num_of_certified_applications > self.num_of_certified_applications:
                 return True
-            elif other.num_of_certified_applicants < self.num_of_certified_applicants:
+            elif other.num_of_certified_applications < self.num_of_certified_applications:
                 return False
             elif other.name < self.name:
                 return True
@@ -93,8 +92,8 @@ def find_feature_titles_in_file(feature_index, feature_names, file):
 
         except FeatureNotFoundError:
                 sys.exit(
-                    'ERROR: Finding zero or more than one occurrence of feature {} in the input file header'
-                    'file {}! Please check variable feature_names in the main function of the code.'
+                    'ERROR: Finding zero or more than one occurrence of feature {} in the header of input file'
+                    'file {}! Please check variable feature_names in the function main().'
                     'Running the code is terminated.'.format(feature_titles, file))
     return dict_of_features_in_this_file
 
@@ -102,7 +101,7 @@ def find_feature_titles_in_file(feature_index, feature_names, file):
 def read_inputs(file, features_dict, feature_names):
 
     """This function reads the input file and calls method manage_feature_instance() to store total
-    number of certified applicants and number of certified applicants in every field"""
+    number of certified applicants and number of certified applicants in every featureinstance"""
 
     file_path = os.path.join(os.path.dirname(__file__), '../input/'+file)
     with open(file_path, 'r') as input_file:
@@ -130,9 +129,9 @@ def main():
 
     feature_names = {'STATUS': {'STATUS', 'CASE_STATUS'}}
     # Features (fields) for which the top-k are to be computed.
-    # Example: To have top-k for Occupation Code as well as State and Occupation name, add this line:
-    # feature_names['CITIES']={'LCA_CASE_WORKLOC2_CITY', 'WORKSITE_CITY'}
-    feature_names['OCCUPATIONS']= {'LCA_CASE_SOC_NAME', 'SOC_NAME'}
+    # Example: To have top-k for cities as well as State and Occupation name, add this line:
+    # feature_names['CITIES'] = {'LCA_CASE_WORKLOC2_CITY', 'WORKSITE_CITY'}
+    feature_names['OCCUPATIONS'] = {'LCA_CASE_SOC_NAME', 'SOC_NAME'}
     feature_names['STATES'] = {'LCA_CASE_EMPLOYER_STATE', 'WORKSITE_STATE'}
     # End of what user can change
 
