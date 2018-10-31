@@ -149,7 +149,7 @@ def main():
             raise FileNotFoundError
 
     except FileNotFoundError:
-        print('ERROR: No input file found! Running the code is terminated.')
+        sys.exit(('ERROR: No input file found! Running the code is terminated.')
 
 
 if __name__ == '__main__':
