@@ -144,7 +144,7 @@ def main():
             for file in os.listdir(os.path.join(os.path.dirname(__file__), '../input')):
                 print('Reading data from file {} ...'.format(file), end = '')
                 read_inputs(file, features_dict, feature_names)
-                print ('Done!')
+                print (' Done!')
             # Printing the output
             del features_dict['STATUS']
             for feature in features_dict.values():
