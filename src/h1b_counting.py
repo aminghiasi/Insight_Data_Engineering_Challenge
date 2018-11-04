@@ -20,7 +20,7 @@ class Feature:
         self.feature_instances = {}
         self.total_num_of_certified_applications = 0
 
-    def manage_feature_instance(self, featureinstance_name):
+    def call_add_application_method(self, featureinstance_name):
         """This method checks if the current FeatureInstance.name exists, and if not creates it before
          calling 'add_application' method"""
         if not featureinstance_name:
@@ -32,10 +32,12 @@ class Feature:
             self.feature_instances[featureinstance_name] = Feature.FeatureInstance(featureinstance_name)
 
     def write_output(self, number_of_top_instances_to_print):
-        file_path = os.path.join(os.path.dirname(__file__), '../output/top_10_{}.txt'.format(self.feature_type.lower()))
+        file_path = os.path.join(os.path.dirname(__file__), '../output/top_10_{}.txt'.
+                                 format(self.feature_type.replace(' ', '_').lower()))
         try:
             with open(file_path, 'w') as output_file:
-                output_file.write('TOP_{};NUMBER_CERTIFIED_APPLICATIONS;PERCENTAGE\n'.format(self.feature_type.upper()))
+                output_file.write('TOP_{};NUMBER_CERTIFIED_APPLICATIONS;PERCENTAGE\n'.
+                                  format(self.feature_type.replace(' ', '_').upper()))
                 line_number = 1
                 for key, value in sorted(self.feature_instances.items(), key=lambda x: x[1]):
                     if line_number > number_of_top_instances_to_print:
@@ -100,7 +102,7 @@ def find_feature_titles_in_file(feature_index, feature_names, file):
 
 def read_inputs(file, features_dict, feature_names):
 
-    """This function reads the input file and calls method manage_feature_instance() to store total
+    """This function reads the input file and calls method call_add_application_method() to store total
     number of certified applicants and number of certified applicants in every featureinstance"""
 
     file_path = os.path.join(os.path.dirname(__file__), '../input/'+file)
@@ -117,7 +119,7 @@ def read_inputs(file, features_dict, feature_names):
                 for feature_name, feature_title in dict_of_features_in_this_file.items():
                     if feature_name != 'STATUS':
                         feature_value = list_of_values[feature_index[feature_title]].replace('"', '')
-                        features_dict[feature_name].manage_feature_instance(feature_value)
+                        features_dict[feature_name].call_add_application_method(feature_value)
         except IndexError:
             sys.exit('Input file {} is broken. Running the code is terminated.'.format(file))
 
@@ -140,7 +142,9 @@ def main():
         if os.listdir(os.path.join(os.path.dirname(__file__), '../input')):
             # Running function read_inputs() on every input file in directory ../input
             for file in os.listdir(os.path.join(os.path.dirname(__file__), '../input')):
+                print('Reading data from file {} ...'.format(file), end = '')
                 read_inputs(file, features_dict, feature_names)
+                print ('Done!')
             # Printing the output
             del features_dict['STATUS']
             for feature in features_dict.values():
